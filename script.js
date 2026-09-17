@@ -104,6 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Show loading state
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             submitBtn.disabled = true;
+            
+            const formStatus = document.getElementById('form-status');
+            formStatus.className = 'form-status'; // reset classes
+            formStatus.innerHTML = '';
 
             fetch(this.action, {
                 method: this.method,
@@ -114,19 +118,30 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .then(response => {
                 if (response.ok) {
-                    alert("✅ Message sent successfully! I've received your email and you should receive an auto-reply confirmation shortly.");
+                    formStatus.innerHTML = "✅ Message sent successfully! I've received your email.";
+                    formStatus.classList.add('success');
                     this.reset();
                 } else {
-                    alert("❌ Oops! Something went wrong. Please try emailing me directly.");
+                    formStatus.innerHTML = "❌ Oops! Something went wrong. Please try emailing me directly.";
+                    formStatus.classList.add('error');
                 }
             })
             .catch(error => {
-                alert("❌ Oops! Something went wrong. Please check your connection or email me directly.");
+                formStatus.innerHTML = "❌ Oops! Something went wrong. Please check your connection or email me directly.";
+                formStatus.classList.add('error');
             })
             .finally(() => {
                 // Restore button state
                 submitBtn.innerHTML = originalBtnText;
                 submitBtn.disabled = false;
+                
+                // Hide success message after 5 seconds
+                if(formStatus.classList.contains('success')) {
+                    setTimeout(() => {
+                        formStatus.style.display = 'none';
+                        formStatus.className = 'form-status';
+                    }, 5000);
+                }
             });
         });
     }
